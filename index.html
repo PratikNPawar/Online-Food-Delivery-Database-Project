@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodEx · Food Delivery Analytics — Pratik Pawar</title>
+<meta name="description" content="FoodEx: MySQL database design, Azure Synapse data warehouse, ETL pipelines, Power BI dashboards, and AI/ML models — by Pratik Pawar, Senior Data & AI Analyst.">
+<meta property="og:title" content="FoodEx · Food Delivery Analytics — Pratik Pawar">
+<meta property="og:description" content="End-to-end data warehouse project: MySQL · Azure Synapse · dbt · Power BI · Azure ML">
+<meta property="og:url" content="https://pratiknpawar.github.io/Online-Food-Delivery-Database-Project">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --bg:#0a0a0a;
+  --bg2:#111111;
+  --bg3:#1a1a1a;
+  --bg4:#222222;
+  --border:#2a2a2a;
+  --border2:#333;
+  --text:#f0f0f0;
+  --text2:#a0a0a0;
+  --text3:#666;
+  --orange:#FF6B35;
+  --orange-dim:#FF6B3520;
+  --orange-border:#FF6B3540;
+  --blue:#3b82f6;
+  --blue-dim:#3b82f620;
+  --green:#22c55e;
+  --green-dim:#22c55e20;
+  --purple:#a78bfa;
+  --purple-dim:#a78bfa20;
+  --amber:#f59e0b;
+  --amber-dim:#f59e0b20;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;-webkit-font-smoothing:antialiased}
+a{color:var(--orange);text-decoration:none}
+a:hover{opacity:.8}
+code,pre{font-family:'JetBrains Mono',monospace}
+
+/* ── NAV ── */
+nav{
+  position:sticky;top:0;z-index:100;
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+  background:rgba(10,10,10,.92);backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-left{display:flex;align-items:center;gap:24px}
+.nav-logo{font-weight:700;font-size:.9rem;color:var(--text);letter-spacing:-.01em}
+.nav-logo span{color:var(--orange)}
+.nav-back{font-size:.8rem;color:var(--text3);display:flex;align-items:center;gap:5px;transition:color .15s}
+.nav-back:hover{color:var(--text2);opacity:1}
+.nav-right{display:flex;gap:10px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .15s;letter-spacing:.01em}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--text3);color:var(--text);opacity:1}
+.btn-orange{background:var(--orange);color:#fff;border:none}
+.btn-orange:hover{background:#e85d28;opacity:1}
+.btn-linkedin{background:#0A66C2;color:#fff;border:none}
+.btn-linkedin:hover{background:#0855a8;opacity:1}
+
+/* ── HERO ── */
+.hero{
+  padding:80px 32px 64px;
+  border-bottom:1px solid var(--border);
+  max-width:900px;margin:0 auto;
+}
+.hero-meta{display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.project-num{font-size:.75rem;font-weight:600;color:var(--text3);letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border:1px solid var(--border2);border-radius:6px}
+.project-tag{font-size:.75rem;font-weight:600;color:var(--orange);letter-spacing:.08em;text-transform:uppercase}
+.hero h1{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;margin-bottom:16px;color:var(--text)}
+.hero h1 em{color:var(--orange);font-style:normal}
+.hero-sub{font-size:1.05rem;color:var(--text2);max-width:640px;margin-bottom:32px;line-height:1.7}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:48px}
+.hero-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.stat{background:var(--bg2);padding:20px 16px;text-align:center}
+.stat-n{font-size:1.8rem;font-weight:800;color:var(--text);letter-spacing:-.02em;line-height:1}
+.stat-n.orange{color:var(--orange)}
+.stat-n.blue{color:var(--blue)}
+.stat-n.green{color:var(--green)}
+.stat-l{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-top:5px}
+
+/* ── LAYOUT ── */
+.page-wrap{max-width:900px;margin:0 auto;padding:0 32px}
+.section{padding:56px 0;border-bottom:1px solid var(--border)}
+.sec-label{font-size:.72rem;font-weight:600;color:var(--orange);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+.sec-title{font-size:1.6rem;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;color:var(--text)}
+.sec-sub{font-size:.9rem;color:var(--text2);margin-bottom:28px;max-width:520px;line-height:1.65}
+
+/* ── TECH PILLS ── */
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;font-size:.78rem;font-weight:500;border:1px solid}
+.p-mysql{background:#EAF3FF10;color:#85B7EB;border-color:#85B7EB30}
+.p-az{background:#3b82f610;color:var(--blue);border-color:#3b82f630}
+.p-bi{background:#f59e0b10;color:var(--amber);border-color:#f59e0b30}
+.p-dbt{background:#FF6B3510;color:var(--orange);border-color:#FF6B3530}
+.p-ml{background:#a78bfa10;color:var(--purple);border-color:#a78bfa30}
+.p-py{background:#22c55e10;color:var(--green);border-color:#22c55e30}
+.p-sql{background:#f8717110;color:#f87171;border-color:#f8717130}
+.p-gh{background:#ffffff08;color:var(--text2);border-color:var(--border2)}
+
+/* ── PIPELINE ── */
+.pipeline{display:flex;flex-direction:column;gap:0}
+.pipe-row{display:flex;align-items:stretch;gap:0}
+.pipe-node{flex:1;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin:4px}
+.pipe-node.hl{border-color:var(--orange-border);background:var(--orange-dim)}
+.pipe-connector{display:flex;align-items:center;justify-content:center;padding:2px 0;color:var(--text3);font-size:.8rem;letter-spacing:.08em}
+.pipe-icon{font-size:1.3rem;margin-bottom:6px}
+.pipe-title{font-weight:600;font-size:.88rem;color:var(--text);margin-bottom:3px}
+.pipe-sub{font-size:.77rem;color:var(--text2);line-height:1.5}
+.pipe-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+
+/* ── QUERY ROWS ── */
+.q-list{border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.q-row{display:flex;align-items:center;justify-content:space-between;padding:12px 18px;border-bottom:1px solid var(--border);transition:background .1s}
+.q-row:last-child{border-bottom:none}
+.q-row:hover{background:var(--bg2)}
+.q-name{font-size:.87rem;font-weight:500;color:var(--text)}
+.q-desc{font-size:.77rem;color:var(--text3);margin-top:1px}
+.tag{padding:3px 9px;border-radius:5px;font-size:.7rem;font-weight:600;letter-spacing:.03em}
+.t-o{background:var(--orange-dim);color:var(--orange);border:1px solid var(--orange-border)}
+.t-c{background:var(--blue-dim);color:var(--blue);border:1px solid #3b82f630}
+.t-d{background:var(--green-dim);color:var(--green);border:1px solid #22c55e30}
+
+/* ── CODE ── */
+.code-wrap{background:#0d1117;border:1px solid var(--border2);border-radius:12px;overflow:hidden;margin-top:16px}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#161b22;border-bottom:1px solid var(--border)}
+.dots{display:flex;gap:5px}
+.d{width:11px;height:11px;border-radius:50%}
+.dr{background:#FF5F57}.dy{background:#FFBD2E}.dg{background:#28C840}
+.code-fn{font-size:.73rem;color:#555;font-family:'JetBrains Mono',monospace}
+pre{padding:20px;font-size:.8rem;line-height:1.75;color:#c9d1d9;overflow-x:auto}
+.kw{color:#ff7b72}.fn2{color:#d2a8ff}.str{color:#a5d6ff}.cm{color:#484f58;font-style:italic}.nm{color:#f0883e}.cls{color:#79c0ff}
+
+/* ── AI CARDS ── */
+.ai-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.ai-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:18px;transition:border-color .15s}
+.ai-card:hover{border-color:var(--border2)}
+.ai-badge{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.7rem;font-weight:600;margin-bottom:10px;letter-spacing:.03em}
+.b-pr{background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple-dim)}
+.b-xg{background:var(--orange-dim);color:var(--orange);border:1px solid var(--orange-border)}
+.b-gb{background:var(--blue-dim);color:var(--blue);border:1px solid #3b82f630}
+.b-nl{background:var(--green-dim);color:var(--green);border:1px solid #22c55e30}
+.ai-title{font-weight:600;font-size:.9rem;margin-bottom:4px;color:var(--text)}
+.ai-desc{font-size:.8rem;color:var(--text2);line-height:1.55}
+
+/* ── FEATURE CARDS ── */
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.f-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px;transition:border-color .15s}
+.f-card:hover{border-color:var(--border2)}
+.f-dot{width:8px;height:8px;border-radius:50%;margin-bottom:12px}
+.dot-o{background:var(--orange)}
+.dot-b{background:var(--blue)}
+.dot-g{background:var(--green)}
+.dot-p{background:var(--purple)}
+.f-title{font-weight:600;font-size:.9rem;margin-bottom:5px;color:var(--text)}
+.f-desc{font-size:.8rem;color:var(--text2);line-height:1.55}
+
+/* ── CONNECT ── */
+.connect-sec{padding:64px 32px;text-align:center;max-width:640px;margin:0 auto}
+.avatar{width:60px;height:60px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:var(--text);margin:0 auto 16px;letter-spacing:.05em}
+.connect-name{font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:5px;letter-spacing:-.01em}
+.connect-role{font-size:.88rem;color:var(--text3);margin-bottom:8px}
+.connect-loc{font-size:.82rem;color:var(--text3);margin-bottom:24px}
+.connect-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+footer{padding:24px 32px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.footer-txt{font-size:.78rem;color:var(--text3)}
+.footer-links{display:flex;gap:16px}
+.footer-links a{font-size:.78rem;color:var(--text3)}
+.footer-links a:hover{color:var(--text2);opacity:1}
+
+@media(max-width:640px){
+  nav{padding:0 16px}
+  .nav-back{display:none}
+  .hero,.page-wrap{padding-left:16px;padding-right:16px}
+  .hero{padding-top:48px;padding-bottom:40px}
+  footer{padding:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-left">
+    <a class="nav-logo" href="https://pratiknpawar.github.io">Pratik <span>Pawar</span></a>
+    <a class="nav-back" href="https://pratiknpawar.github.io/#projects">← Back to portfolio</a>
+  </div>
+  <div class="nav-right">
+    <a class="btn btn-ghost" href="https://github.com/PratikNPawar/Online-Food-Delivery-Database-Project" target="_blank">★ GitHub</a>
+    <a class="btn btn-linkedin" href="https://linkedin.com/in/pratiknpawar" target="_blank">LinkedIn</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-meta">
+    <span class="project-num">Project 02</span>
+    <span class="project-tag">Analytics · SQL · Cloud · AI/ML</span>
+  </div>
+  <h1>FoodEx · Food<br>Delivery <em>Data Warehouse</em></h1>
+  <p class="hero-sub">
+    Designed and built an end-to-end analytics platform on top of a food delivery MySQL database — from OLTP schema design and SQL analytics through to Azure Synapse, dbt transformations, Power BI dashboards, and Azure ML models.
+  </p>
+  <div class="hero-btns">
+    <a class="btn btn-orange" href="https://github.com/PratikNPawar/Online-Food-Delivery-Database-Project" target="_blank">★ View full code on GitHub</a>
+    <a class="btn btn-ghost" href="https://pratiknpawar.github.io" target="_blank">← Main portfolio</a>
+    <a class="btn btn-linkedin" href="https://linkedin.com/in/pratiknpawar" target="_blank">Connect on LinkedIn</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-n">9</div><div class="stat-l">DB Tables</div></div>
+    <div class="stat"><div class="stat-n orange">9+</div><div class="stat-l">SQL Queries</div></div>
+    <div class="stat"><div class="stat-n blue">5</div><div class="stat-l">Power BI Pages</div></div>
+    <div class="stat"><div class="stat-n green">4</div><div class="stat-l">AI / ML Models</div></div>
+    <div class="stat"><div class="stat-n">80+</div><div class="stat-l">Sample Orders</div></div>
+  </div>
+</div>
+
+<!-- TECH STACK -->
+<section class="section">
+  <div class="page-wrap">
+    <div class="sec-label">Tech stack</div>
+    <div class="sec-title">Built end-to-end</div>
+    <p class="sec-sub">Every layer from raw OLTP transactions to AI predictions.</p>
+    <div class="pills">
+      <span class="pill p-mysql">MySQL 8.0</span>
+      <span class="pill p-sql">T-SQL</span>
+      <span class="pill p-az">Azure Synapse Analytics</span>
+      <span class="pill p-az">Azure Data Factory</span>
+      <span class="pill p-bi">Power BI · DAX · RLS</span>
+      <span class="pill p-dbt">dbt Core</span>
+      <span class="pill p-ml">Azure Machine Learning</span>
+      <span class="pill p-py">Python · Prophet · XGBoost</span>
+      <span class="pill p-ml">Azure Cognitive Services</span>
+      <span class="pill p-gh">GitHub Actions CI/CD</span>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section class="section">
+  <div class="page-wrap">
+    <div class="sec-label">Architecture</div>
+    <div class="sec-title">Medallion data pipeline</div>
+    <p class="sec-sub">Raw MySQL data flows Bronze → Silver → Gold into Synapse, then into Power BI and Azure ML — the same pattern used in production at MTA.</p>
+    <div class="pipe-grid">
+      <div class="pipe-node hl">
+        <div class="pipe-icon">🛵</div>
+        <div class="pipe-title">MySQL OLTP</div>
+        <div class="pipe-sub">9 tables: Orders, Customers, Restaurants, Menus, Delivery Execs, Payments, Feedback, Address, FDP</div>
+      </div>
+      <div class="pipe-node">
+        <div class="pipe-icon">🔄</div>
+        <div class="pipe-title">Azure Data Factory</div>
+        <div class="pipe-sub">Watermark-based CDC every 15 min. Incremental loads to ADLS Gen2. Same ADF patterns from MTA migration work.</div>
+      </div>
+      <div class="pipe-node">
+        <div class="pipe-icon">🥉→🥇</div>
+        <div class="pipe-title">ADLS Gen2 + dbt</div>
+        <div class="pipe-sub">Bronze (raw Parquet) → Silver (cleansed, typed) → Gold (star schema). Schema tests on every model.</div>
+      </div>
+      <div class="pipe-node">
+        <div class="pipe-icon">🏛️</div>
+        <div class="pipe-title">Azure Synapse</div>
+        <div class="pipe-sub">FactOrders + 6 dimension tables. SCD Type 2 on DimCustomer. Columnstore indexes, hash distribution.</div>
+      </div>
+      <div class="pipe-node">
+        <div class="pipe-icon">📊</div>
+        <div class="pipe-title">Power BI</div>
+        <div class="pipe-sub">5 dashboards. Advanced DAX, RLS, incremental refresh — consistent with PL-300 certified approach.</div>
+      </div>
+      <div class="pipe-node">
+        <div class="pipe-icon">🤖</div>
+        <div class="pipe-title">Azure ML</div>
+        <div class="pipe-sub">Prophet demand forecasting, XGBoost churn, ETA regression, Azure Cognitive Services sentiment.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+  <div class="page-wrap">
+    <div class="sec-label">What's built</div>
+    <div class="sec-title">Every layer, from scratch</div>
+    <p class="sec-sub">Designed as a standalone project that mirrors real enterprise data engineering work.</p>
+    <div class="feat-grid">
+      <div class="f-card">
+        <div class="f-dot dot-o"></div>
+        <div class="f-title">OLTP schema design</div>
+        <div class="f-desc">9 normalized tables with FK constraints, audit triggers (BEFORE UPDATE logs all Customer changes to Customer_updated), and stored procedures for inactive customer identification.</div>
+      </div>
+      <div class="f-card">
+        <div class="f-dot dot-b"></div>
+        <div class="f-title">ETL pipeline</div>
+        <div class="f-desc">ADF pipelines with watermark CDC, same architecture used in the MTA 12-source ERP integration. dbt handles all Bronze→Silver→Gold with not_null, unique, and accepted_values tests.</div>
+      </div>
+      <div class="f-card">
+        <div class="f-dot dot-g"></div>
+        <div class="f-title">SQL analytics (9 queries)</div>
+        <div class="f-desc">Cuisine frequency, top-5 demand zones, day-of-week distribution, payment method split, customer acquisition MoM, bounce rate, inactive customer list, exec timeline, performance scoring.</div>
+      </div>
+      <div class="f-card">
+        <div class="f-dot dot-p"></div>
+        <div class="f-title">Power BI dashboards</div>
+        <div class="f-desc">5 pages with advanced DAX (on-time delivery %, bounce rate, AOV), row-level security by region, and incremental refresh — consistent with PL-300 certified patterns.</div>
+      </div>
+      <div class="f-card">
+        <div class="f-dot dot-o"></div>
+        <div class="f-title">Star schema (Synapse)</div>
+        <div class="f-desc">FactOrders + DimCustomer (SCD Type 2), DimRestaurant, DimMenuItem, DimDeliveryExec, DimAddress, DimDate. Hash distributed on customer_key, columnstore indexed.</div>
+      </div>
+      <div class="f-card">
+        <div class="f-dot dot-b"></div>
+        <div class="f-title">AI / ML models</div>
+        <div class="f-desc">Demand forecasting (Prophet), churn prediction (XGBoost, same stack used in Independent Practice), delivery ETA regression, and review sentiment via Azure Cognitive Services.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SQL -->
+<section class="section">
+  <div class="page-wrap">
+    <div class="sec-label">SQL analytics</div>
+    <div class="sec-title">9 business queries</div>
+    <p class="sec-sub">Each answers a real operational question for a food delivery business.</p>
+    <div class="q-list">
+      <div class="q-row"><div><div class="q-name">Cuisine frequency</div><div class="q-desc">Which cuisines drive the most orders?</div></div><span class="tag t-o">Orders</span></div>
+      <div class="q-row"><div><div class="q-name">Top 5 demand locations</div><div class="q-desc">Where to hire more delivery executives?</div></div><span class="tag t-o">Orders</span></div>
+      <div class="q-row"><div><div class="q-name">Orders by day of week</div><div class="q-desc">When do we need peak staffing?</div></div><span class="tag t-o">Orders</span></div>
+      <div class="q-row"><div><div class="q-name">Payment method split</div><div class="q-desc">COD vs. online — where to invest?</div></div><span class="tag t-o">Orders</span></div>
+      <div class="q-row"><div><div class="q-name">Customer acquisition MoM</div><div class="q-desc">Individual vs. business customer growth?</div></div><span class="tag t-c">Customer</span></div>
+      <div class="q-row"><div><div class="q-name">Customer bounce rate</div><div class="q-desc">% who registered but never ordered?</div></div><span class="tag t-c">Customer</span></div>
+      <div class="q-row"><div><div class="q-name">Inactive customer list</div><div class="q-desc">Who to target for re-engagement?</div></div><span class="tag t-c">Customer</span></div>
+      <div class="q-row"><div><div class="q-name">Delivery exec timeline</div><div class="q-desc">Prep time vs. ride time vs. expected ETA?</div></div><span class="tag t-d">Delivery</span></div>
+      <div class="q-row"><div><div class="q-name">Exec performance scoring</div><div class="q-desc">1–5 star score per exec based on delay minutes</div></div><span class="tag t-d">Delivery</span></div>
+    </div>
+    <div class="code-wrap">
+      <div class="code-head">
+        <div class="dots"><div class="d dr"></div><div class="d dy"></div><div class="d dg"></div></div>
+        <span class="code-fn">customer_bounce_rate.sql</span>
+        <div></div>
+      </div>
+<pre><span class="cm">-- What % of registered customers never placed a single order?</span>
+<span class="kw">SELECT</span>
+    <span class="fn2">ROUND</span>(
+        <span class="fn2">COUNT</span>(<span class="kw">CASE WHEN</span> c.cust_id <span class="kw">NOT IN</span> (
+            <span class="kw">SELECT</span> o.`cust_id(FK)` <span class="kw">FROM</span> `Order` o
+        ) <span class="kw">THEN</span> <span class="nm">1</span> <span class="kw">END</span>) * <span class="nm">100.0</span>
+        / <span class="fn2">COUNT</span>(c.cust_id),
+    <span class="nm">2</span>) <span class="kw">AS</span> bounce_rate_pct
+<span class="kw">FROM</span> <span class="cls">Customer</span> c
+<span class="kw">WHERE</span> c.cust_user = <span class="nm">1</span>;  <span class="cm">-- Active users only</span>
+
+<span class="cm">-- Delivery exec performance score (1–5) based on delay vs. expected ETA</span>
+<span class="kw">SELECT</span>
+    de.name,
+    <span class="fn2">ROUND</span>(<span class="fn2">AVG</span>(<span class="fn2">MINUTE</span>(<span class="fn2">TIMEDIFF</span>(
+        o.order_delivered_time, o.expected_delivery_time
+    ))), <span class="nm">1</span>) <span class="kw">AS</span> avg_delay_mins,
+    <span class="kw">CASE</span>
+        <span class="kw">WHEN</span> <span class="fn2">AVG</span>(<span class="fn2">MINUTE</span>(<span class="fn2">TIMEDIFF</span>(o.order_delivered_time, o.expected_delivery_time))) &lt;= <span class="nm">0</span>   <span class="kw">THEN</span> <span class="nm">5</span>
+        <span class="kw">WHEN</span> <span class="fn2">AVG</span>(<span class="fn2">MINUTE</span>(<span class="fn2">TIMEDIFF</span>(o.order_delivered_time, o.expected_delivery_time))) &lt;= <span class="nm">10</span>  <span class="kw">THEN</span> <span class="nm">4</span>
+        <span class="kw">WHEN</span> <span class="fn2">AVG</span>(<span class="fn2">MINUTE</span>(<span class="fn2">TIMEDIFF</span>(o.order_delivered_time, o.expected_delivery_time))) &lt;= <span class="nm">20</span>  <span class="kw">THEN</span> <span class="nm">3</span>
+        <span class="kw">ELSE</span> <span class="nm">1</span>
+    <span class="kw">END</span> <span class="kw">AS</span> performance_score
+<span class="kw">FROM</span> `Order` o
+<span class="kw">JOIN</span> <span class="cls">Delivery_Exec</span> de <span class="kw">ON</span> o.`delivery_exec_id(FK)` = de.delivery_exec_id
+<span class="kw">JOIN</span> <span class="cls">Feedback</span> f <span class="kw">ON</span> o.order_id = f.`order_id (FK)` <span class="kw">AND</span> f.rated_person = <span class="str">'D'</span>
+<span class="kw">GROUP BY</span> de.delivery_exec_id, de.name
+<span class="kw">ORDER BY</span> avg_delay_mins <span class="kw">ASC</span>;</pre>
+    </div>
+  </div>
+</section>
+
+<!-- AI -->
+<section class="section">
+  <div class="page-wrap">
+    <div class="sec-label">AI / Machine learning</div>
+    <div class="sec-title">Four models in production</div>
+    <p class="sec-sub">Built using the same Azure ML stack and Python libraries used in the Independent Practice consulting work — Prophet, XGBoost, Random Forest, and Azure Cognitive Services.</p>
+    <div class="ai-grid">
+      <div class="ai-card">
+        <div class="ai-badge b-pr">Prophet</div>
+        <div class="ai-title">Demand forecasting</div>
+        <div class="ai-desc">Predicts hourly order volume per city and cuisine type. Pre-positions delivery executives before peak hours. ~18% improvement over baseline — mirrors consulting project results.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-badge b-xg">XGBoost</div>
+        <div class="ai-title">Churn prediction</div>
+        <div class="ai-desc">Scores every customer's churn probability using recency, frequency, delivery ratings, and Free Delivery Pass subscription status. Tracked via MLflow.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-badge b-gb">Gradient Boosting</div>
+        <div class="ai-title">Delivery ETA</div>
+        <div class="ai-desc">Predicts real delivery time from distance, time of day, restaurant type, and exec current workload. Powers live ETA displayed in the app.</div>
+      </div>
+      <div class="ai-card">
+        <div class="ai-badge b-nl">Azure Cognitive</div>
+        <div class="ai-title">Review sentiment</div>
+        <div class="ai-desc">Azure Text Analytics on Feedback.comments — extracts food quality, service, and delivery aspect-level sentiment scores for the Power BI AI Insights dashboard.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONNECT -->
+<div class="connect-sec">
+  <div class="avatar">PP</div>
+  <div class="connect-name">Pratik N. Pawar</div>
+  <div class="connect-role">Senior Data & AI Analyst · PL-300 Certified</div>
+  <div class="connect-loc">Jersey City, NJ · Open to opportunities</div>
+  <div class="connect-btns">
+    <a class="btn btn-orange" href="https://pratiknpawar.github.io" target="_blank">View full portfolio</a>
+    <a class="btn btn-linkedin" href="https://linkedin.com/in/pratiknpawar" target="_blank">Connect on LinkedIn</a>
+    <a class="btn btn-ghost" href="mailto:pawarrpratik91@gmail.com">✉ pawarrpratik91@gmail.com</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-txt">FoodEx · Food Delivery Database Project · MIT License · <a href="https://github.com/PratikNPawar/Online-Food-Delivery-Database-Project" style="color:var(--text3)">github.com/PratikNPawar</a></span>
+  <div class="footer-links">
+    <a href="https://pratiknpawar.github.io">Portfolio</a>
+    <a href="https://github.com/PratikNPawar" target="_blank">GitHub</a>
+    <a href="https://linkedin.com/in/pratiknpawar" target="_blank">LinkedIn</a>
+  </div>
+</footer>
+
+</body>
+</html>
